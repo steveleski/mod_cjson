@@ -102,10 +102,10 @@ Not yet.
 ### OpenVMS
 On OpenVMS, you build this way:
 ```
-    $ cc/share/pointer=32/prefix=all/names=(as_is,short) mod_cjson.c+apache$common:[include]apache$library.tlb/lib
-    $ cc/pointer=32/prefix=all/names=(as_is,short)/warn=noinformationals cjson.c
-    $ cc/pointer=32/prefix=all/names=(as_is,short) apache_cjson.c
-    $ cc/pointer=32/prefix=all/names=(as_is,short) cjson_vms.c
+    $ cc/prefix=all/names=(as_is,short) mod_cjson.c+apache$common:[include]apache$library.tlb/lib
+    $ cc/prefix=all/names=(as_is,short)/warn=noinformationals cjson.c
+    $ cc/prefix=all/names=(as_is,short) apache_cjson.c
+    $ cc/prefix=all/names=(as_is,short) cjson_vms.c
     $!
     $ lib/create/object cjson.olb cjson, apache_cjson, cjson_vms
     $!
