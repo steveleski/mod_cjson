@@ -120,9 +120,9 @@ On OpenVMS, you build this way:
 ```
 To build the COBOL-friendly object library:
 ```
-    $ cc/pointer=32/prefix=all/names=(as_is,short)/warn=noinformationals cjson.c
-    $ cc/pointer=32/prefix=all/names=(as_is,short) apache_cjson.c
-    $ cc/pointer=32/prefix=all/names=(as_is,short) cjson_vms.c
+    $ cc/prefix=all/names=(as_is,short)/warn=noinformationals cjson.c
+    $ cc/prefix=all/names=(as_is,short) apache_cjson.c
+    $ cc/prefix=all/names=(as_is,short) cjson_vms.c
     $ library/create/object cJSON.olb cJSON, apache_cjson, cJSON_VMS
 ```
 
