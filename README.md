@@ -116,7 +116,6 @@ On OpenVMS, you build this way:
     SYMBOL_VECTOR=(cjson_module=DATA)
     APACHE$HTTPD_SHR/SHARE
     APACHE$APR_SHR/SHARE
-    APACHE$APR_SHRP/SHARE
     APACHE$APU_SHR/SHARE
 ```
 To build the COBOL-friendly object library:
