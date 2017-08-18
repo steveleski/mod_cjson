@@ -107,8 +107,6 @@ On OpenVMS, you build this way:
     $ cc/prefix=all/names=(as_is,short) apache_cjson.c
     $ cc/prefix=all/names=(as_is,short) cjson_vms.c
     $!
-    $ lib/create/object cjson.olb cjson, apache_cjson, cjson_vms
-    $!
     $ link /share=mod_cjson.exe mod_cjson.obj, cjson.obj, apache_cjson.obj, sys$input:/option
     IDENTIFICATION="V1.0"
     GSMATCH=LEQUAL,1,0
@@ -130,7 +128,11 @@ To build the COBOL-friendly object library:
 Just copy mod_cjson.exe to `APACHE$COMMON:[MODULES]`
 
 #### MMS
-Not yet. 
+```
+    $ MMS ! to build
+    $ MMS INSTALL ! to copy mod_cjson.exe to APACHE$COMMON:[MODULES]
+    $ MMS CLEAN ! to delete OBJs, OLBs, and EXEs
+```
 
 ### Windows
 I'm working on instructions for building on Windows. It should compile with Visual Studio, but I haven't tried
@@ -231,7 +233,8 @@ There's a COBOL copybook defining the same for use with OpenVMS COBOL.
     05  CJSON$OUTPUT_FORMAT             PIC S9(09) COMP.
         88  CJSON$_COLLAPSED_OUTPUT     VALUE 0.
         88  CJSON$_PRETTY_OUTPUT        VALUE 1.
-    05  FILLER                          PIC X(08).
+    05  FILLER                          USAGE POINTER.
+    05  FILLER                          USAGE POINTER.
 ```
 
 ### Sample C program to implement a REST-like service
@@ -357,6 +360,8 @@ A1000_MAIN.
 
     EXIT PROGRAM.
 ```
+
+Usage for the COBOL calls starting with CJSON$ are dscribed [here](#cjson-wrapper-for-cobol)
 
 #### Build script for the shareable
 
