@@ -103,11 +103,10 @@ Not yet.
 On OpenVMS, you build this way:
 ```
     $ cc/prefix=all/names=(as_is,short) mod_cjson.c+apache$common:[include]apache$library.tlb/lib
-    $ cc/prefix=all/names=(as_is,short)/warn=noinformationals cjson.c
+    $ cc/prefix=all/names=(as_is,short)/warn=noinformationals cJSON.c
     $ cc/prefix=all/names=(as_is,short) apache_cjson.c
-    $ cc/prefix=all/names=(as_is,short) cjson_vms.c
     $!
-    $ link /share=mod_cjson.exe mod_cjson.obj, cjson.obj, apache_cjson.obj, sys$input:/option
+    $ link /share=mod_cjson.exe mod_cjson.obj, cJSON.obj, apache_cjson.obj, sys$input:/option
     IDENTIFICATION="V1.0"
     GSMATCH=LEQUAL,1,0
     CASE_SENSITIVE=YES
@@ -118,9 +117,9 @@ On OpenVMS, you build this way:
 ```
 To build the COBOL-friendly object library:
 ```
-    $ cc/prefix=all/names=(as_is,short)/warn=noinformationals cjson.c
+    $ cc/prefix=all/names=(as_is,short)/warn=noinformationals cJSON.c
     $ cc/prefix=all/names=(as_is,short) apache_cjson.c
-    $ cc/prefix=all/names=(as_is,short) cjson_vms.c
+    $ cc/prefix=all/names=(as_is,short) cJSON_VMS.c
     $ library/create/object cJSON.olb cJSON, apache_cjson, cJSON_VMS
 ```
 
@@ -180,7 +179,8 @@ can be an OpenVMS-style filespec.
 * `out` - cJSON object passed back from the shareable.
 
 #### In COBOL:
-```
+
+```cobol
 PROGRAM-ID. APACHE_CJSON_ENTRY_POINT.
 ...
 LINKAGE SECTION.
@@ -217,7 +217,7 @@ typedef struct apache_cjson {
 
 There's a COBOL copybook defining the same for use with OpenVMS COBOL.
 
-```
+```cobol
 01  CJSON$APACHE_CJSON.
     05  CJSON$METHOD                    PIC S9(09) COMP.
         88  CJSON$_GET                  VALUE 0.
@@ -240,6 +240,7 @@ There's a COBOL copybook defining the same for use with OpenVMS COBOL.
 ### Sample C program to implement a REST-like service
 
 ```c
+#include "apache_cjson.h"
 int APACHE_CJSON_ENTRY_POINT(apache_cjson *context, cJSON *request, cJSON **response) {
     cJSON *root;
     cJSON *fmt;
@@ -287,7 +288,7 @@ LoadModule cjson_module modules/mod_cjson.so
 
 ### Sample OpenVMS COBOL program to implement a REST-like service
 
-```
+```cobol
 IDENTIFICATION DIVISION.
 PROGRAM-ID. APACHE_CJSON_ENTRY_POINT.
 DATA DIVISION.
