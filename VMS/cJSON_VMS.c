@@ -36,11 +36,6 @@
  * IMPORTANT NOTES
  * ===============
  *
- * At the time this code was written, the VSI C compiler for whatever reason
- * fails when compiling cJSON. The source code references size_t, but does not
- * #include <stddef.h>. So adding the missing include in the cJSON.h file
- * allows the compile to complete.
- *
  * XXX TO DO XXX
  * =============
  *
