@@ -56,6 +56,9 @@
  *
  *
  */
+#ifdef __VMS
+#define _USE_STD_STAT 1
+#endif
 
 #include "httpd.h"
 #include "http_config.h"
@@ -70,7 +73,7 @@
 #include <stddef.h>
 #include <string.h>
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 #else
 #include <dlfcn.h>
@@ -124,7 +127,7 @@ typedef struct cjson_cfg_s {
     apr_pool_t *pool;   /* APR memory pool */
     int cmode;          /* Environment to which record applies */
     const char *shrlib_path; /* File path to the share library */
-#ifdef WIN32            /* handle to the share library */
+#ifdef _WIN32            /* handle to the share library */
     HMODULE shrlib;
 #else
     void *shrlib;
@@ -197,7 +200,7 @@ static const char *cjson_dlopen(cjson_cfg *cfg, apr_pool_t *tmp_pool)
 {
     const char *err_text = NULL;
 
-#ifdef WIN32
+#ifdef _WIN32
     cfg->shrlib = LoadLibrary(cfg->shrlib_path);
     if (cfg->shrlib == NULL) {
         LPVOID lpMsgBuf;
@@ -240,7 +243,7 @@ static const char *cjson_load_shrlib(cjson_cfg *cfg, request_rec *r)
     err_text = cjson_dlopen(cfg, r->pool);
     if (err_text != NULL) return err_text;
 
-#ifdef WIN32
+#ifdef _WIN32
     pfun = (void *)GetProcAddress(cfg->shrlib, APACHE_HTTPSERVER_ENTRY_POINT);
 #else
     pfun = (void *)dlsym(cfg->shrlib, APACHE_HTTPSERVER_ENTRY_POINT);
