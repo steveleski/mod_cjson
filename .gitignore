@@ -8,6 +8,8 @@ test
 *.la
 *.obj
 *.dia
+*.lis
+*.map
 *.olb
 *.exe
 *.swp
