@@ -92,6 +92,34 @@ extern unsigned long CJSON$TEST_FOR_NULL(void *ptr) {
 
 
 /*
+ * Test for null.
+ *
+ * Parameters passed to a COBOL program are de-referenced because COBOL assumes
+ * pass-by-reference. If a param is passed BY VALUE to a COBOL program, the 
+ * value becomes inaccessible and if you try to touch it, you'll get an access
+ * violation. This routine returns the value of a parameter passed by value. It
+ * only works for 32 bit integers.
+ *
+ * Usage:
+ * LINKAGE SECTION.
+ * 01  _parameter USAGE/PIC whatever.
+ * 01  _value PIC S9(09) COMP.
+ * CALL 'CJSON$GET_BY_VALUE_PARAM' USING
+ *    REFERENCE _parameter,
+ *    REFERENCE _value,
+ *    GIVING _status.
+ */
+extern unsigned long CJSON$GET_BY_VALUE_PARAM(unsigned long *ptr, unsigned long *value) {
+    if (ptr == NULL) {
+        *value = 0;
+        return SS$_BADPARAM;
+    }
+    *value = *ptr;
+    return SS$_NORMAL; 
+}
+
+
+/*
  * Convert a space-padded string to a null-terminated. Requires apache_cjson
  * (part of the mod_cjson Apache plug-in). The string that's returned is 
  * dynamically allocated. mod_cjson will atomatically clean it up after an http
