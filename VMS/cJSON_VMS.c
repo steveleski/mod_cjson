@@ -228,6 +228,77 @@ extern void CJSON$DONE(apache_cjson *context) {
     cjson_free_mem(context);
 }
 
+
+/*
+ * Get the string value of the field represented by the cJSON object.
+ *
+ * Returns a failure status if the object does not represent a string type.
+ *
+ * Usage:
+ * 01  cJSON_Field_Object USAGE POINTER.
+ * 01  _string PIC X(whatever).
+ * CALL 'CJSON$GET_VALUESTRING' USING
+ *    VALUE      cJSON_Field_Object,
+ *    DESCRIPTOR _string.
+ */
+extern int CJSON$GET_VALUESTRING(cJSON *object, struct dsc$descriptor_s *value) {
+    int srclen, dstlen, i;
+
+    if (!cJSON_IsString(object)) return SS$_INVARG;
+    srclen = strlen(object->valuestring);
+    dstlen = value->dsc$w_length;
+
+    if (srclen > dstlen) srclen = dstlen;
+
+    memcpy(value->dsc$a_pointer, object->valuestring, srclen);
+    for (i = srclen; i < dstlen; i++) {
+        value->dsc$a_pointer[i] = ' '; // Pad with spaces
+    }
+
+    return SS$_NORMAL;
+}
+
+
+/*
+ * Get the integer value field contained in the cJSON object
+ *
+ * Returns a failure status if the object does not represent a number type.
+ *
+ * Usage:
+ * 01  cJSON_Field_Object USAGE POINTER.
+ * 01  _integer PIC S9(09) COMP.
+ * CALL 'CJSON$GET_VALUEINT' USING
+ *    VALUE      cJSON_Field_Object,
+ *    REFERENCE  _integer.
+ */
+extern int CJSON$GET_VALUEINT(cJSON *object, int *number) {
+    if (!cJSON_IsNumber(object)) return SS$_INVARG;
+
+    *number = object->valueint;
+    return SS$_NORMAL;
+}
+
+
+/*
+ * Get the double value field contained in the cJSON object.
+ *
+ * Returns a failure status if the object does not represent a number type.
+ *
+ * Usage:
+ * 01  cJSON_Field_Object USAGE POINTER.
+ * 01  _number USAGE COMP-2.
+ * CALL 'CJSON$GET_VALUEDOUBLE' USING
+ *    VALUE      cJSON_Field_Object,
+ *    REFERENCE  _number.
+ */
+extern int CJSON$GET_VALUEDOUBLE(cJSON *object, double *number) {
+    if (!cJSON_IsNumber(object)) return SS$_INVARG;
+
+    *number = object->valuedouble;
+    return SS$_NORMAL;
+}
+
+
 /*
  * Wraps cJSON_Parse to an OpenVMS COBOL friendly call signature.
  *
@@ -411,10 +482,8 @@ extern int CJSON$GET_NUMBER_ITEM(cJSON *object, struct dsc$descriptor_s *name, d
     cJSON *tmp = cJSON_GetObjectItem(object, string);
     free(string);
     if (!tmp) return 0;
-    if (!(cJSON_Number == tmp->type)) return 0;
 
-    *number = tmp->valuedouble;
-    return SS$_NORMAL;
+    return CJSON$GET_VALUEDOUBLE(tmp, number);
 }
 
 
@@ -438,10 +507,8 @@ extern int CJSON$GET_INTEGER_ITEM(cJSON *object, struct dsc$descriptor_s *name, 
     cJSON *tmp = cJSON_GetObjectItem(object, string);
     free(string);
     if (!tmp) return 0;
-    if (!(cJSON_Number == tmp->type)) return 0;
 
-    *number = tmp->valueint;
-    return SS$_NORMAL;
+    return CJSON$GET_VALUEINT(tmp, number);
 }
 
 
@@ -461,22 +528,12 @@ extern int CJSON$GET_INTEGER_ITEM(cJSON *object, struct dsc$descriptor_s *name, 
  *    DESCRIPTOR _text.
  */
 extern int CJSON$GET_STRING_ITEM(cJSON *object, struct dsc$descriptor_s *name, struct dsc$descriptor_s *value) {
-    int srclen, dstlen, i;
     char *string = to_nts(name);
     cJSON *tmp = cJSON_GetObjectItem(object, string);
     free(string);
     if (!tmp) return 0;
-    srclen = strlen(tmp->valuestring);
-    dstlen = value->dsc$w_length;
 
-    if (srclen > dstlen) srclen = dstlen;
-
-    memcpy(value->dsc$a_pointer, tmp->valuestring, srclen);
-    for (i = srclen; i < dstlen; i++) {
-        value->dsc$a_pointer[i] = ' '; // Pad with spaces
-    }
-
-    return SS$_NORMAL;
+    return CJSON$GET_VALUESTRING(tmp, value);
 }
 
 
