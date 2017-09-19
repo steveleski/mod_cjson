@@ -560,7 +560,7 @@ extern int CJSON$GET_BOOL_ITEM(cJSON *object, struct dsc$descriptor_s *name, int
     free(string);
     if (!tmp) return 0;
 
-    *value = tmp->valueint;
+    *value = tmp->type == cJSON_True;
     return SS$_NORMAL;
 }
 
